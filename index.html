@@ -226,6 +226,8 @@ window.addEventListener('DOMContentLoaded', () => {
   setupCalc();
   loadConfig();
   loadAll();
+  // Actualisation automatique toutes les 30 secondes
+  setInterval(loadAll, 30000);
 });
 
 // ── APPEL API via JSONP (contourne CORS) ───────
