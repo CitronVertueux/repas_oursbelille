@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion — Réservation Repas Oursbelille</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --or: #F5C842; --noir: #0E0E0E; --noir2: #1A1A1A;
+      --blanc: #FAFAF7; --gris: #8A8A8A;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--noir);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .bg { position: fixed; inset: 0; z-index: 0; }
+    .bg::before {
+      content: ''; position: absolute;
+      top: -40%; left: -20%; width: 80vw; height: 80vw;
+      background: radial-gradient(circle, rgba(245,200,66,0.07) 0%, transparent 65%);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg::after {
+      content: ''; position: absolute;
+      bottom: -30%; right: -10%; width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(245,200,66,0.04) 0%, transparent 65%);
+      animation: drift 16s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(4%,6%) scale(1.08)} }
+    .grid { position: fixed; inset: 0; z-index: 0;
+      background-image: linear-gradient(rgba(245,200,66,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(245,200,66,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px; margin: 1.5rem;
+      animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* LOGO ZONE */
+    .logo-zone {
+      text-align: center; margin-bottom: 2rem;
+    }
+    .dindon-wrap {
+      width: 90px; height: 90px; margin: 0 auto 1rem;
+      background: var(--or);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 40px rgba(245,200,66,0.25);
+      overflow: hidden;
+    }
+    .dindon-wrap img {
+      width: 75px; height: 75px; object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+    }
+    .dindon-svg {
+      width: 64px; height: 64px;
+    }
+    .app-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 900;
+      color: var(--blanc); line-height: 1.15;
+      margin-bottom: 4px;
+    }
+    .app-title span { color: var(--or); }
+    .app-sub {
+      font-size: 12px; color: var(--gris);
+      font-weight: 300; letter-spacing: 0.8px;
+    }
+
+    /* FORM */
+    .box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 1.75rem;
+      backdrop-filter: blur(20px);
+    }
+    .fl { display: block; font-size: 10px; font-weight: 600;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--gris); margin-bottom: 7px; }
+    .fg { margin-bottom: 1.1rem; }
+    .fi {
+      width: 100%; padding: 12px 15px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 11px;
+      font-family: 'Outfit', sans-serif; font-size: 15px;
+      color: var(--blanc); outline: none; transition: border-color 0.2s;
+    }
+    .fi::placeholder { color: rgba(255,255,255,0.2); }
+    .fi:focus { border-color: var(--or); background: rgba(245,200,66,0.04); }
+    .btn {
+      width: 100%; margin-top: 4px; padding: 13px;
+      background: var(--or); border: none; border-radius: 11px;
+      font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--noir); cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.2px;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .msg {
+      margin-top: 1rem; padding: 11px 14px;
+      border-radius: 10px; font-size: 13px; font-weight: 500; display: none;
+    }
+    .msg.err { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3); color: #e74c3c; }
+    .msg.ok  { background: rgba(30,132,73,0.15);  border: 1px solid rgba(30,132,73,0.3);  color: #2ecc71; }
+    .msg.show { display: block; }
+    .footer { text-align: center; margin-top: 1.25rem; font-size: 11px; color: rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+
+<div class="card">
+  <div class="logo-zone">
+    <div class="dindon-wrap">
+      <!-- Dindon SVG inspiré de l'affiche -->
+      <svg class="dindon-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Corps -->
+        <ellipse cx="40" cy="52" rx="20" ry="18" fill="#1A1A1A"/>
+        <!-- Plumes queue -->
+        <path d="M60 45 Q72 30 68 20 Q58 35 55 42" fill="#0E0E0E" stroke="#F5C842" stroke-width="1"/>
+        <path d="M62 48 Q76 38 74 26 Q62 40 58 47" fill="#0E0E0E" stroke="#F5C842" stroke-width="1"/>
+        <path d="M58 42 Q68 25 62 14 Q54 30 52 40" fill="#0E0E0E" stroke="#F5C842" stroke-width="1"/>
+        <!-- Aile -->
+        <path d="M25 52 Q18 58 20 66 Q30 60 38 58" fill="#2A2A2A" stroke="#F5C842" stroke-width="0.8"/>
+        <!-- Tête -->
+        <circle cx="34" cy="32" r="12" fill="#1A1A1A"/>
+        <!-- Bec -->
+        <path d="M24 31 L18 33 L24 35 Z" fill="#F5C842"/>
+        <!-- Caroncule rouge -->
+        <path d="M24 33 Q20 37 22 40" stroke="#E74C3C" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <!-- Oeil -->
+        <circle cx="30" cy="29" r="3.5" fill="white"/>
+        <circle cx="29" cy="29" r="2" fill="#0E0E0E"/>
+        <circle cx="28.5" cy="28.5" r="0.7" fill="white"/>
+        <!-- Patte bière -->
+        <path d="M45 58 L48 70 L50 70 L47 58" fill="#F5C842"/>
+        <!-- Bière -->
+        <rect x="46" y="45" width="14" height="18" rx="3" fill="#F5C842"/>
+        <rect x="47" y="46" width="12" height="6" rx="2" fill="white" opacity="0.9"/>
+        <rect x="60" y="48" width="4" height="8" rx="2" fill="#F5C842"/>
+      </svg>
+    </div>
+    <div class="app-title">Réservation Repas<br/><span>Oursbelille</span></div>
+    <div class="app-sub">Espace comité — Accès restreint</div>
+  </div>
+
+  <div class="box">
+    <div class="fg">
+      <label class="fl">Identifiant</label>
+      <input type="text" id="username" class="fi" placeholder="ComiteOursbelille" autocomplete="username"/>
+    </div>
+    <div class="fg">
+      <label class="fl">Mot de passe</label>
+      <input type="password" id="password" class="fi" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn" id="btn" onclick="login()">Accéder</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="footer">Fête d'Oursbelille • 10 · 11 · 12 Juillet 2025</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://qnoaclsvbuelzbmpsdib.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFub2FjbHN2YnVlbHpibXBzZGliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjE3NDUsImV4cCI6MjA5NDgzNzc0NX0.MeEGe77mVVGO--BvUGglKfH_NkFV2gbRY6GupX0sl6c";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Mapping identifiant → email Supabase
+  const COMPTES = {
+    "comiteoursbelille": "comiteoursbelille@fete.local"
+  };
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) window.location.href = 'index.html';
+    document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+    document.getElementById('username').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+  });
+
+  function showMsg(txt, type) {
+    const el = document.getElementById('msg');
+    el.textContent = txt; el.className = 'msg show ' + type;
+  }
+
+  async function login() {
+    const username = document.getElementById('username').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('btn');
+
+    if (!username || !password) { showMsg('Remplis tous les champs.', 'err'); return; }
+
+    const email = COMPTES[username];
+    if (!email) { showMsg('Identifiant inconnu.', 'err'); return; }
+
+    btn.disabled = true; btn.textContent = 'Connexion…';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showMsg('Identifiant ou mot de passe incorrect.', 'err');
+      btn.disabled = false; btn.textContent = 'Accéder';
+      return;
+    }
+
+    showMsg('✓ Connecté ! Redirection…', 'ok');
+    setTimeout(() => window.location.href = 'index.html', 700);
+  }
+</script>
+</body>
+</html>
