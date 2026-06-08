@@ -3,204 +3,145 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Diagnostic — Oursbelille</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <title>Diagnostic Auth</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: #111; color: #fff; min-height: 100vh; padding: 2rem; }
-    h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #FFD700; margin-bottom: 2rem; letter-spacing: 2px; }
-    .card { background: #1a1a1a; border: 1.5px solid #333; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-    .card h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 12px; }
-    .row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+    body { font-family: monospace; background: #0a0a0a; color: #eee; padding: 2rem; }
+    h1 { color: #F5C842; font-size: 20px; margin-bottom: 1.5rem; letter-spacing: 2px; }
+    .card { background: #161616; border: 1px solid #333; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+    .card h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    input { width: 100%; padding: 10px 12px; background: #222; border: 1px solid #444; border-radius: 8px; color: #fff; font-family: monospace; font-size: 13px; outline: none; margin-bottom: 8px; }
+    input:focus { border-color: #F5C842; }
+    button { background: #F5C842; color: #000; border: none; border-radius: 8px; padding: 10px 20px; font-family: monospace; font-weight: 700; font-size: 13px; cursor: pointer; margin-right: 8px; margin-bottom: 8px; }
+    button.sec { background: #333; color: #F5C842; border: 1px solid #F5C842; }
+    .row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
     .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .dot.ok { background: #1E8449; }
-    .dot.err { background: #C0392B; }
-    .dot.wait { background: #E67E22; animation: pulse 1s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .label { flex: 1; }
-    .val { font-size: 12px; color: #888; font-family: monospace; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .btn { background: #FFD700; color: #111; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 8px; }
-    .btn:hover { opacity: 0.85; }
-    .btn-sm { background: #333; color: #FFD700; border: 1.5px solid #FFD700; padding: 6px 14px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 12px; cursor: pointer; margin-left: auto; }
-    pre { background: #000; border-radius: 8px; padding: 12px; font-size: 12px; color: #0f0; overflow-x: auto; margin-top: 8px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
-    .url-input { width: 100%; padding: 9px 12px; border: 1.5px solid #444; border-radius: 8px; background: #222; color: #fff; font-size: 13px; font-family: monospace; outline: none; margin-bottom: 10px; }
-    .url-input:focus { border-color: #FFD700; }
-    a { color: #FFD700; }
+    .ok { background: #2ecc71; } .err { background: #e74c3c; } .wait { background: #e67e22; animation: p 1s infinite; }
+    @keyframes p { 0%,100%{opacity:1}50%{opacity:.3} }
+    .val { color: #888; font-size: 11px; flex: 1; }
+    pre { background: #000; border-radius: 8px; padding: 12px; font-size: 11px; color: #2ecc71; overflow-x: auto; margin-top: 8px; max-height: 250px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+    .sep { height: 1px; background: #333; margin: 12px 0; }
   </style>
 </head>
 <body>
+<h1>⚙ DIAGNOSTIC AUTH — OURSBELILLE</h1>
 
-<h1>🔧 DIAGNOSTIC — FÊTE D'OURSBELILLE</h1>
-
-<!-- URL -->
 <div class="card">
-  <h2>1. URL Apps Script</h2>
-  <input class="url-input" id="script-url" placeholder="Colle ton URL ici..." />
-  <button class="btn" onclick="runAll()">▶ Lancer le diagnostic</button>
+  <h2>Configuration</h2>
+  <input id="url" placeholder="URL Supabase (https://xxx.supabase.co)"/>
+  <input id="key" placeholder="Clé anon"/>
+  <input id="email" placeholder="Email (bricenogues65@gmail.com)"/>
+  <input id="pwd" placeholder="Mot de passe (riton65)" type="password"/>
+  <button onclick="runAll()">▶ Lancer diagnostic</button>
+  <button class="sec" onclick="testSignup()">➕ Créer compte test</button>
 </div>
 
-<!-- Tests -->
 <div class="card">
-  <h2>2. Résultats des tests</h2>
-
-  <div class="row" id="t-url">
-    <div class="dot wait" id="d-url"></div>
-    <div class="label">Format URL valide</div>
-    <div class="val" id="v-url">—</div>
-  </div>
-
-  <div class="row" id="t-reach">
-    <div class="dot wait" id="d-reach"></div>
-    <div class="label">Connexion JSONP (getConfig)</div>
-    <div class="val" id="v-reach">En attente…</div>
-  </div>
-
-  <div class="row" id="t-getall">
-    <div class="dot wait" id="d-getall"></div>
-    <div class="label">Lecture réservations (getAll)</div>
-    <div class="val" id="v-getall">En attente…</div>
-  </div>
-
-  <div class="row" id="t-add">
-    <div class="dot wait" id="d-add"></div>
-    <div class="label">Écriture test (add)</div>
-    <div class="val" id="v-add">En attente…</div>
-  </div>
+  <h2>Résultats</h2>
+  <div class="row"><div class="dot wait" id="d1"></div><div>URL Supabase valide</div><div class="val" id="v1">—</div></div>
+  <div class="row"><div class="dot wait" id="d2"></div><div>Connexion Supabase (ping)</div><div class="val" id="v2">—</div></div>
+  <div class="row"><div class="dot wait" id="d3"></div><div>Email Confirmé</div><div class="val" id="v3">—</div></div>
+  <div class="row"><div class="dot wait" id="d4"></div><div>Login email/password</div><div class="val" id="v4">—</div></div>
+  <div class="row"><div class="dot wait" id="d5"></div><div>Email provider activé</div><div class="val" id="v5">—</div></div>
 </div>
 
-<!-- Logs -->
 <div class="card">
-  <h2>3. Logs bruts</h2>
+  <h2>Logs</h2>
   <pre id="logs">Aucun test lancé.</pre>
 </div>
 
-<!-- Aide -->
-<div class="card">
-  <h2>4. Si ça ne marche pas</h2>
-  <div style="font-size:13px;color:#aaa;line-height:1.7">
-    <p>① Dans Apps Script → <strong style="color:#fff">Déployer → Gérer les déploiements</strong></p>
-    <p>② Clique sur ✏️ l'icône crayon → sélectionne <strong style="color:#fff">Nouvelle version</strong></p>
-    <p>③ "Qui peut accéder" → <strong style="color:#fff">Tout le monde</strong></p>
-    <p>④ Déployer → copie la nouvelle URL</p>
-    <br/>
-    <p>⚠️ Le <code style="color:#FFD700">Code.gs</code> doit contenir <code style="color:#FFD700">callback = params.callback</code> pour le JSONP</p>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const DEFAULT_URL = "https://script.google.com/macros/s/AKfycbyZrjwbLp5zF7UxfCfZYCEjN-zOcYAAQMjyUYiWvTr-t_9dJzT2Kdbws2SYz3qB3i9h/exec";
-document.getElementById("script-url").value = DEFAULT_URL;
+  // Pré-remplir
+  document.getElementById('url').value = 'https://btdrbvbchccqjzwyhcfg.supabase.co';
+  document.getElementById('key').value = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0ZHJidmJjaGNjcWp6d3loY2ZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MzQ1OTcsImV4cCI6MjA5MjUxMDU5N30.FGEwM0hz7kevHw3MM-ZQZtTLeHda4XPxvsYrr2cUcb8';
+  document.getElementById('email').value = 'bricenogues65@gmail.com';
+  document.getElementById('pwd').value = 'riton65';
 
-let logs = [];
-
-function log(msg) {
-  logs.push("[" + new Date().toLocaleTimeString() + "] " + msg);
-  document.getElementById("logs").textContent = logs.join("\n");
-}
-
-function setDot(id, state, val) {
-  const d = document.getElementById("d-" + id);
-  const v = document.getElementById("v-" + id);
-  d.className = "dot " + state;
-  if (val !== undefined) v.textContent = val;
-}
-
-function jsonp(url, params, timeout) {
-  return new Promise((resolve, reject) => {
-    const cb = "diag_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-    const u = new URL(url);
-    Object.entries(params).forEach(([k,v]) => u.searchParams.set(k,v));
-    u.searchParams.set("callback", cb);
-
-    const s = document.createElement("script");
-    s.src = u.toString();
-
-    const t = setTimeout(() => {
-      cleanup(); reject(new Error("Timeout " + (timeout/1000) + "s"));
-    }, timeout || 8000);
-
-    window[cb] = (data) => { cleanup(); resolve(data); };
-    s.onerror = () => { cleanup(); reject(new Error("Erreur réseau (script tag)")); };
-
-    function cleanup() {
-      clearTimeout(t);
-      delete window[cb];
-      if (s.parentNode) s.parentNode.removeChild(s);
-    }
-
-    document.head.appendChild(s);
-  });
-}
-
-async function runAll() {
-  logs = [];
-  const url = document.getElementById("script-url").value.trim();
-  log("URL : " + url);
-
-  // Test 1 — URL valide ?
-  const urlOk = url.startsWith("https://script.google.com/macros/s/") && url.endsWith("/exec");
-  setDot("url", urlOk ? "ok" : "err", urlOk ? "✓ Format correct" : "✗ URL invalide");
-  log("Format URL : " + (urlOk ? "OK" : "INVALIDE"));
-  if (!urlOk) { log("⛔ Arrêt — URL invalide"); return; }
-
-  // Test 2 — getConfig
-  setDot("reach", "wait", "Test en cours…");
-  log("→ Test getConfig (JSONP)…");
-  try {
-    const r = await jsonp(url, { action: "getConfig" }, 8000);
-    log("← Réponse : " + JSON.stringify(r));
-    if (r.ok) {
-      setDot("reach", "ok", "✓ prixAdulte=" + r.prixAdulte + " prixEnfant=" + r.prixEnfant);
-    } else {
-      setDot("reach", "err", "✗ " + (r.error||"Erreur inconnue"));
-    }
-  } catch(e) {
-    log("✗ Erreur : " + e.message);
-    setDot("reach", "err", "✗ " + e.message);
-    log("⛔ Arrêt — impossible de contacter le script");
-    setDot("getall", "err", "Non testé");
-    setDot("add", "err", "Non testé");
-    return;
+  let logs = [];
+  function log(m) { logs.push('['+new Date().toLocaleTimeString()+'] '+m); document.getElementById('logs').textContent = logs.join('\n'); }
+  function dot(id, state, val) {
+    document.getElementById('d'+id).className = 'dot '+state;
+    if(val) document.getElementById('v'+id).textContent = val;
   }
 
-  // Test 3 — getAll
-  setDot("getall", "wait", "Test en cours…");
-  log("→ Test getAll…");
-  try {
-    const r = await jsonp(url, { action: "getAll" }, 8000);
-    log("← Réponse : " + JSON.stringify(r).slice(0, 200));
-    const nb = (r.reservations||[]).length;
-    setDot("getall", "ok", "✓ " + nb + " réservation(s) trouvée(s)");
-  } catch(e) {
-    log("✗ Erreur : " + e.message);
-    setDot("getall", "err", "✗ " + e.message);
+  async function runAll() {
+    logs = [];
+    const url = document.getElementById('url').value.trim();
+    const key = document.getElementById('key').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('pwd').value;
+
+    // Test 1 — URL
+    const urlOk = url.startsWith('https://') && url.includes('.supabase.co');
+    dot(1, urlOk?'ok':'err', urlOk?'✓ Format OK':'✗ URL invalide');
+    log('URL: ' + url);
+    if(!urlOk) return;
+
+    const sb = supabase.createClient(url, key);
+
+    // Test 2 — Ping (table publique)
+    log('→ Ping Supabase...');
+    dot(2, 'wait', 'Test...');
+    try {
+      const { error } = await sb.from('comite_members').select('count').limit(1);
+      if(error) { dot(2,'err','✗ '+error.message); log('✗ '+error.message); }
+      else { dot(2,'ok','✓ Connecté'); log('✓ Supabase accessible'); }
+    } catch(e) { dot(2,'err','✗ '+e.message); log('✗ '+e.message); }
+
+    // Test 3 — Vérifier si email existe dans comite_members
+    log('→ Vérif email dans comite_members...');
+    dot(3, 'wait', 'Test...');
+    try {
+      const { data, error } = await sb.from('comite_members').select('*').eq('email', email);
+      if(error) { dot(3,'err','✗ '+error.message); log('✗ '+error.message); }
+      else if(!data || data.length === 0) { dot(3,'err','✗ Email absent de comite_members'); log('✗ Email non trouvé dans la table'); }
+      else { dot(3,'ok','✓ '+JSON.stringify(data[0])); log('✓ Membre trouvé: '+JSON.stringify(data[0])); }
+    } catch(e) { dot(3,'err','✗ '+e.message); }
+
+    // Test 4 — Login
+    log('→ Test signInWithPassword...');
+    dot(4, 'wait', 'Test...');
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+      if(error) {
+        dot(4,'err','✗ '+error.message);
+        log('✗ Erreur login: '+error.message+' (code: '+error.status+')');
+      } else {
+        dot(4,'ok','✓ Connecté ! user_id='+data.user.id);
+        log('✓ LOGIN OK: '+JSON.stringify(data.user.email));
+        await sb.auth.signOut();
+      }
+    } catch(e) { dot(4,'err','✗ '+e.message); log('✗ '+e.message); }
+
+    // Test 5 — Vérif settings (on tente un signup pour voir le message d'erreur)
+    log('→ Test provider email...');
+    dot(5, 'wait', 'Test...');
+    try {
+      const { error } = await sb.auth.signUp({ email: 'test_diag_'+Date.now()+'@test.com', password: 'test123456' });
+      if(error && error.message.includes('disabled')) {
+        dot(5,'err','✗ Email provider désactivé !');
+        log('✗ Email provider désactivé: '+error.message);
+      } else {
+        dot(5,'ok','✓ Email provider actif');
+        log('✓ Email provider actif');
+      }
+    } catch(e) { dot(5,'err','✗ '+e.message); }
+
+    log('✅ Diagnostic terminé.');
   }
 
-  // Test 4 — add (test)
-  setDot("add", "wait", "Test en cours…");
-  log("→ Test add (écriture test)…");
-  try {
-    const r = await jsonp(url, {
-      action: "add",
-      nomPrenom: "TEST DIAGNOSTIC",
-      telephone: "0600000000",
-      adultes: 1, enfants: 0,
-      paiement: "CB", statut: "Non payé",
-      commentaires: "À supprimer — test automatique"
-    }, 10000);
-    log("← Réponse : " + JSON.stringify(r));
-    if (r.ok) {
-      setDot("add", "ok", "✓ Écrit ligne " + r.rowIndex + " (montant " + r.montant + "€)");
-    } else {
-      setDot("add", "err", "✗ " + (r.error||"Erreur"));
-    }
-  } catch(e) {
-    log("✗ Erreur : " + e.message);
-    setDot("add", "err", "✗ " + e.message);
+  async function testSignup() {
+    const url = document.getElementById('url').value.trim();
+    const key = document.getElementById('key').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('pwd').value;
+    const sb = supabase.createClient(url, key);
+    log('→ Tentative signup avec '+email+'...');
+    const { data, error } = await sb.auth.signUp({ email, password: pwd });
+    if(error) log('✗ Signup error: '+error.message+' ('+error.status+')');
+    else log('✓ Signup OK: '+JSON.stringify(data.user?.email)+' confirmed='+data.user?.email_confirmed_at);
   }
-
-  log("✅ Diagnostic terminé.");
-}
 </script>
 </body>
 </html>
