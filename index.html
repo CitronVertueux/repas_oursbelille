@@ -178,10 +178,7 @@
         </div>
         <button class="btn btn-primary" id="btn-submit" onclick="submitForm()">➕ Ajouter la réservation</button>
         <button class="btn btn-cancel" id="btn-cancel" style="display:none" onclick="resetForm()">Annuler la modification</button>
-        <p class="config-hint">
-          Tarifs : <strong id="hint-adulte">20 €</strong> adulte · <strong id="hint-enfant">10 €</strong> enfant
-          — <a onclick="openConfig()">modifier</a>
-        </p>
+       
       </div>
     </div>
   </aside>
@@ -208,18 +205,8 @@
   </section>
 </main>
 
-<!-- CONFIG MODAL -->
-<div class="overlay" id="overlay" onclick="if(event.target===this)closeConfig()">
-  <div class="modal">
-    <h3>⚙ Tarifs de la soirée</h3>
-    <p>Modifiez les tarifs pour cette session (pour sauvegarder définitivement, mettez à jour D3 et F3 dans le Sheet).</p>
-    <div class="form-row">
-      <div><label>Prix adulte (€)</label><input type="number" id="cfg-adulte" step="0.5" /></div>
-      <div><label>Prix enfant (€)</label><input type="number" id="cfg-enfant" step="0.5" /></div>
-    </div>
-    <button class="btn btn-primary" style="margin-top:1rem" onclick="saveConfig()">Appliquer</button>
-  </div>
-</div>
+
+
 
 <div class="toast" id="toast"></div>
 
