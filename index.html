@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réservations — Fête d'Oursbelille</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --jaune: #FFD700;
+      --jaune-clair: #FFF8DC;
+      --jaune-moyen: #FFE566;
+      --noir: #111111;
+      --gris-bg: #F7F5EE;
+      --gris-bord: #E0DDD0;
+      --vert: #1E8449;
+      --rouge: #C0392B;
+      --orange: #E67E22;
+      --blanc: #FFFFFF;
+      --text: #111111;
+      --text-muted: #666;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gris-bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--noir);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 64px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      background: var(--jaune);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--noir);
+      flex-shrink: 0;
+    }
+    .logo-text h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      color: var(--blanc);
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+    .logo-text p {
+      font-size: 11px;
+      color: var(--jaune-moyen);
+      letter-spacing: 0.5px;
+    }
+    .header-stats {
+      display: flex;
+      gap: 20px;
+    }
+    .stat-pill {
+      text-align: center;
+    }
+    .stat-pill .val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--jaune);
+      line-height: 1;
+    }
+    .stat-pill .lbl {
+      font-size: 10px;
+      color: #aaa;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      main { grid-template-columns: 1fr; }
+      .header-stats { display: none; }
+    }
+
+    /* ── PANEL GÉNÉRAL ── */
+    .panel {
+      background: var(--blanc);
+      border-radius: 12px;
+      border: 1.5px solid var(--gris-bord);
+      overflow: hidden;
+    }
+    .panel-head {
+      background: var(--noir);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-head h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--jaune);
+      letter-spacing: 1px;
+    }
+    .panel-body { padding: 1.25rem; }
+
+    /* ── FORMULAIRE ── */
+    .form-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--gris-bord);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--blanc);
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--jaune);
+      box-shadow: 0 0 0 3px rgba(255,215,0,0.15);
+    }
+    textarea { resize: vertical; min-height: 64px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .montant-preview {
+      background: var(--jaune-clair);
+      border: 1.5px solid var(--jaune);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .montant-preview span { font-size: 13px; color: var(--text-muted); }
+    .montant-preview strong { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--noir); }
+
+    .btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--jaune);
+      color: var(--noir);
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-cancel {
+      background: var(--gris-bg);
+      color: var(--text-muted);
+      border: 1.5px solid var(--gris-bord);
+      margin-top: 8px;
+    }
+    .btn-cancel:hover { background: #eee; }
+
+    .config-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+    .config-hint a { color: var(--jaune); text-decoration: none; }
+
+    /* ── LISTE RÉSERVATIONS ── */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 160px;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+    }
+    .search-wrap input {
+      padding-left: 34px;
+    }
+    .filter-btn {
+      padding: 8px 14px;
+      border: 1.5px solid var(--gris-bord);
+      border-radius: 8px;
+      background: var(--blanc);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .filter-btn.active {
+      background: var(--noir);
+      color: var(--jaune);
+      border-color: var(--noir);
+    }
+
+    /* Carte réservation */
+    .resa-list { display: flex; flex-direction: column; gap: 8px; }
+    .resa-card {
+      background: var(--blanc);
+      border: 1.5px solid var(--gris-bord);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .resa-card:hover {
+      border-color: var(--jaune);
+      box-shadow: 0 2px 8px rgba(255,215,0,0.12);
+    }
+    .resa-num {
+      background: var(--noir);
+      color: var(--jaune);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .resa-info { flex: 1; min-width: 0; }
+    .resa-info .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .resa-info .meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .resa-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .resa-montant {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .resa-actions { display: flex; gap: 6px; }
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border: 1.5px solid var(--gris-bord);
+      border-radius: 6px;
+      background: var(--blanc);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--jaune-clair); border-color: var(--jaune); }
+    .icon-btn.del:hover { background: #fde; border-color: var(--rouge); }
+    .icon-btn svg { width: 15px; height: 15px; }
+
+    /* Badge statut */
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-paye { background: #d4edda; color: #1E8449; }
+    .badge-nonpaye { background: #fde; color: var(--rouge); }
+    .badge-attente { background: #fde8cc; color: var(--orange); }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--noir);
+      color: var(--jaune);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: 2px solid var(--jaune);
+      z-index: 999;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gris-bord);
+      border-top-color: var(--jaune);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Config overlay */
+    .config-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .config-overlay.open { display: flex; }
+    .config-box {
+      background: var(--blanc);
+      border-radius: 14px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+      border: 2px solid var(--jaune);
+    }
+    .config-box h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      color: var(--noir);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-muted);
+    }
+    .empty-state svg { opacity: 0.25; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-badge">FO</div>
+      <div class="logo-text">
+        <h1>FÊTE D'OURSBELILLE</h1>
+        <p>REPAS DU VENDREDI SOIR — 19 JUILLET</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-pill">
+        <div class="val" id="stat-total">—</div>
+        <div class="lbl">Réservations</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val" id="stat-adultes">—</div>
+        <div class="lbl">Adultes</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val" id="stat-enfants">—</div>
+        <div class="lbl">Enfants</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val" id="stat-encaisse">—</div>
+        <div class="lbl">Encaissé</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ── COLONNE GAUCHE : FORMULAIRE ── -->
+  <aside>
+    <div class="panel">
+      <div class="panel-head">
+        <h2 id="form-title">Nouvelle réservation</h2>
+        <span id="form-mode-badge" style="font-size:11px; background:var(--jaune); color:var(--noir); padding:3px 10px; border-radius:20px; font-weight:700;">NOUVEAU</span>
+      </div>
+      <div class="panel-body">
+        <input type="hidden" id="edit-row-index" />
+
+        <div class="form-group">
+          <label>Nom &amp; Prénom *</label>
+          <input type="text" id="f-nom" placeholder="Ex : Dupont Jean" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input type="tel" id="f-tel" placeholder="06 12 34 56 78" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Adultes</label>
+            <input type="number" id="f-adultes" min="0" value="0" />
+          </div>
+          <div class="form-group">
+            <label>Enfants</label>
+            <input type="number" id="f-enfants" min="0" value="0" />
+          </div>
+        </div>
+
+        <div class="montant-preview">
+          <span>Montant estimé</span>
+          <strong id="montant-calc">0 €</strong>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Mode paiement</label>
+            <select id="f-paiement">
+              <option value="">— choisir —</option>
+              <option value="CB">CB</option>
+              <option value="Espèces">Espèces</option>
+              <option value="Chèque">Chèque</option>
+              <option value="Virement">Virement</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <select id="f-statut">
+              <option value="Non payé">Non payé</option>
+              <option value="En attente">En attente</option>
+              <option value="Payé">Payé</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Commentaires</label>
+          <textarea id="f-commentaires" placeholder="Allergies, remarques..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="submitForm()" id="btn-submit">➕ Ajouter la réservation</button>
+        <button class="btn btn-cancel" id="btn-cancel" style="display:none;" onclick="cancelEdit()">Annuler la modification</button>
+
+        <p class="config-hint">
+          Tarifs : <strong id="hint-adulte">—</strong> adulte · <strong id="hint-enfant">—</strong> enfant
+          — <a href="#" onclick="openConfig()">modifier</a>
+        </p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── COLONNE DROITE : LISTE ── -->
+  <section>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Liste des réservations</h2>
+        <button onclick="loadAll()" style="background:none;border:none;cursor:pointer;color:var(--jaune);font-size:18px;" title="Actualiser">↻</button>
+      </div>
+      <div class="panel-body">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="search-input" placeholder="Rechercher un nom..." oninput="filterList()" />
+          </div>
+          <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">Tous</button>
+          <button class="filter-btn" data-filter="Payé" onclick="setFilter('Payé',this)">Payés</button>
+          <button class="filter-btn" data-filter="Non payé" onclick="setFilter('Non payé',this)">Non payés</button>
+        </div>
+        <div id="resa-list-container">
+          <div class="loading"><span class="spinner"></span> Connexion au Sheet…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ── CONFIG MODAL ── -->
+<div class="config-overlay" id="config-overlay" onclick="closeConfig(event)">
+  <div class="config-box" onclick="event.stopPropagation()">
+    <h3>⚙ Tarifs de la soirée</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:1rem;">Ces tarifs sont lus depuis le Google Sheet (cellules B4 et D4). Modifie-les directement dans le Sheet.</p>
+    <div class="form-row">
+      <div>
+        <label>Prix adulte (€)</label>
+        <input type="number" id="cfg-adulte" step="0.5" />
+      </div>
+      <div>
+        <label>Prix enfant (€)</label>
+        <input type="number" id="cfg-enfant" step="0.5" />
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">⚠️ Modification locale uniquement (pour cette session). Pour sauvegarder, change B4/D4 dans le Sheet.</p>
+    <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveConfigLocal()">Appliquer pour cette session</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CONFIG ────────────────────────────────────────────────────────────────
+  // ⚠️ REMPLACE CETTE URL par celle de ton Apps Script déployé
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2ZHGPmaX-2LKYdkigGTub80vtceqJ9HvWlG_RZhU98qrGPQigPYvzeXpRC3_xPvV1/exec";
+
+  let prixAdulte = 15;
+  let prixEnfant = 8;
+  let allReservations = [];
+  let currentFilter = "all";
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    loadConfig();
+    loadAll();
+    setupMontantCalc();
+  });
+
+  function api(params) {
+    const url = new URL(SCRIPT_URL);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+    return fetch(url.toString()).then(r => r.json());
+  }
+
+  async function loadConfig() {
+    try {
+      const data = await api({ action: "getConfig" });
+      if (data.prixAdulte) prixAdulte = data.prixAdulte;
+      if (data.prixEnfant) prixEnfant = data.prixEnfant;
+    } catch(e) {}
+    document.getElementById('hint-adulte').textContent = prixAdulte + ' €';
+    document.getElementById('hint-enfant').textContent = prixEnfant + ' €';
+    document.getElementById('cfg-adulte').value = prixAdulte;
+    document.getElementById('cfg-enfant').value = prixEnfant;
+    updateMontant();
+  }
+
+  async function loadAll() {
+    document.getElementById('resa-list-container').innerHTML = '<div class="loading"><span class="spinner"></span> Chargement…</div>';
+    try {
+      const data = await api({ action: "getAll" });
+      allReservations = data.reservations || [];
+      renderList();
+      updateStats();
+    } catch(e) {
+      document.getElementById('resa-list-container').innerHTML = '<div class="loading">❌ Erreur de connexion. Vérifie l\'URL du script.</div>';
+    }
+  }
+
+  // ── STATS ─────────────────────────────────────────────────────────────────
+  function updateStats() {
+    const total = allReservations.length;
+    const adultes = allReservations.reduce((s, r) => s + (parseInt(r.adultes)||0), 0);
+    const enfants = allReservations.reduce((s, r) => s + (parseInt(r.enfants)||0), 0);
+    const encaisse = allReservations
+      .filter(r => r.statut === "Payé")
+      .reduce((s, r) => s + (parseFloat(r.montant)||0), 0);
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-adultes').textContent = adultes;
+    document.getElementById('stat-enfants').textContent = enfants;
+    document.getElementById('stat-encaisse').textContent = encaisse.toFixed(0) + '€';
+  }
+
+  // ── RENDU LISTE ───────────────────────────────────────────────────────────
+  function renderList() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    let filtered = allReservations.filter(r => {
+      const matchSearch = !search || r.nomPrenom.toLowerCase().includes(search);
+      const matchFilter = currentFilter === 'all' || r.statut === currentFilter;
+      return matchSearch && matchFilter;
+    });
+
+    const container = document.getElementById('resa-list-container');
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty-state">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+        <p>Aucune réservation trouvée</p>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = '<div class="resa-list">' + filtered.map(r => cardHTML(r)).join('') + '</div>';
+  }
+
+  function cardHTML(r) {
+    const badgeClass = r.statut === 'Payé' ? 'badge-paye' : r.statut === 'Non payé' ? 'badge-nonpaye' : 'badge-attente';
+    const montant = parseFloat(r.montant) || 0;
+    const meta = [
+      r.adultes ? r.adultes + ' adulte' + (r.adultes>1?'s':'') : '',
+      r.enfants ? r.enfants + ' enfant' + (r.enfants>1?'s':'') : '',
+      r.telephone || '',
+      r.paiement || ''
+    ].filter(Boolean).join(' · ');
+
+    return `<div class="resa-card">
+      <div class="resa-num">${r.numero || '#'}</div>
+      <div class="resa-info">
+        <div class="name">${escHtml(r.nomPrenom)}</div>
+        <div class="meta">${escHtml(meta)}</div>
+        ${r.commentaires ? `<div class="meta" style="color:#999;font-style:italic;">${escHtml(r.commentaires)}</div>` : ''}
+      </div>
+      <div class="resa-right">
+        <div class="resa-montant">${montant.toFixed(2)} €</div>
+        <span class="badge ${badgeClass}">${r.statut}</span>
+        <div class="resa-actions">
+          <button class="icon-btn" onclick='editResa(${JSON.stringify(r)})' title="Modifier">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn del" onclick="deleteResa(${r.rowIndex}, '${escHtml(r.nomPrenom)}')" title="Supprimer">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // ── FILTRES / RECHERCHE ───────────────────────────────────────────────────
+  function setFilter(val, btn) {
+    currentFilter = val;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  }
+  function filterList() { renderList(); }
+
+  // ── MONTANT AUTO ──────────────────────────────────────────────────────────
+  function setupMontantCalc() {
+    ['f-adultes','f-enfants'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateMontant);
+    });
+  }
+  function updateMontant() {
+    const a = parseInt(document.getElementById('f-adultes').value) || 0;
+    const e = parseInt(document.getElementById('f-enfants').value) || 0;
+    const m = a * prixAdulte + e * prixEnfant;
+    document.getElementById('montant-calc').textContent = m.toFixed(2) + ' €';
+  }
+
+  // ── FORMULAIRE : AJOUTER / MODIFIER ───────────────────────────────────────
+  async function submitForm() {
+    const nom = document.getElementById('f-nom').value.trim();
+    if (!nom) { toast('⚠️ Nom requis !'); return; }
+
+    const rowIndex = document.getElementById('edit-row-index').value;
+    const isEdit = !!rowIndex;
+
+    const params = {
+      action: isEdit ? "update" : "add",
+      nomPrenom: nom,
+      telephone: document.getElementById('f-tel').value.trim(),
+      adultes: document.getElementById('f-adultes').value || 0,
+      enfants: document.getElementById('f-enfants').value || 0,
+      paiement: document.getElementById('f-paiement').value,
+      statut: document.getElementById('f-statut').value,
+      commentaires: document.getElementById('f-commentaires').value.trim(),
+    };
+    if (isEdit) params.rowIndex = rowIndex;
+
+    document.getElementById('btn-submit').textContent = '⏳ Enregistrement…';
+    document.getElementById('btn-submit').disabled = true;
+
+    try {
+      const res = await api(params);
+      if (res.ok) {
+        toast(isEdit ? '✅ Réservation modifiée !' : '✅ Réservation ajoutée !');
+        resetForm();
+        await loadAll();
+      } else {
+        toast('❌ Erreur : ' + (res.error || 'inconnue'));
+      }
+    } catch(e) {
+      toast('❌ Erreur de connexion');
+    }
+
+    document.getElementById('btn-submit').textContent = isEdit ? '💾 Enregistrer les modifications' : '➕ Ajouter la réservation';
+    document.getElementById('btn-submit').disabled = false;
+  }
+
+  function editResa(r) {
+    document.getElementById('edit-row-index').value = r.rowIndex;
+    document.getElementById('f-nom').value = r.nomPrenom || '';
+    document.getElementById('f-tel').value = r.telephone || '';
+    document.getElementById('f-adultes').value = r.adultes || 0;
+    document.getElementById('f-enfants').value = r.enfants || 0;
+    document.getElementById('f-paiement').value = r.paiement || '';
+    document.getElementById('f-statut').value = r.statut || 'Non payé';
+    document.getElementById('f-commentaires').value = r.commentaires || '';
+    updateMontant();
+    document.getElementById('form-title').textContent = 'Modifier réservation';
+    document.getElementById('form-mode-badge').textContent = 'ÉDITION';
+    document.getElementById('form-mode-badge').style.background = '#E67E22';
+    document.getElementById('btn-submit').textContent = '💾 Enregistrer les modifications';
+    document.getElementById('btn-cancel').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    resetForm();
+  }
+
+  function resetForm() {
+    document.getElementById('edit-row-index').value = '';
+    document.getElementById('f-nom').value = '';
+    document.getElementById('f-tel').value = '';
+    document.getElementById('f-adultes').value = 0;
+    document.getElementById('f-enfants').value = 0;
+    document.getElementById('f-paiement').value = '';
+    document.getElementById('f-statut').value = 'Non payé';
+    document.getElementById('f-commentaires').value = '';
+    updateMontant();
+    document.getElementById('form-title').textContent = 'Nouvelle réservation';
+    document.getElementById('form-mode-badge').textContent = 'NOUVEAU';
+    document.getElementById('form-mode-badge').style.background = 'var(--jaune)';
+    document.getElementById('btn-submit').textContent = '➕ Ajouter la réservation';
+    document.getElementById('btn-cancel').style.display = 'none';
+  }
+
+  // ── SUPPRIMER ─────────────────────────────────────────────────────────────
+  async function deleteResa(rowIndex, nom) {
+    if (!confirm('Supprimer la réservation de ' + nom + ' ?')) return;
+    try {
+      const res = await api({ action: "delete", rowIndex });
+      if (res.ok) {
+        toast('🗑️ Réservation supprimée');
+        await loadAll();
+      }
+    } catch(e) { toast('❌ Erreur'); }
+  }
+
+  // ── CONFIG ────────────────────────────────────────────────────────────────
+  function openConfig() {
+    document.getElementById('cfg-adulte').value = prixAdulte;
+    document.getElementById('cfg-enfant').value = prixEnfant;
+    document.getElementById('config-overlay').classList.add('open');
+  }
+  function closeConfig(e) {
+    if (e.target === document.getElementById('config-overlay'))
+      document.getElementById('config-overlay').classList.remove('open');
+  }
+  function saveConfigLocal() {
+    prixAdulte = parseFloat(document.getElementById('cfg-adulte').value) || prixAdulte;
+    prixEnfant = parseFloat(document.getElementById('cfg-enfant').value) || prixEnfant;
+    document.getElementById('hint-adulte').textContent = prixAdulte + ' €';
+    document.getElementById('hint-enfant').textContent = prixEnfant + ' €';
+    document.getElementById('config-overlay').classList.remove('open');
+    updateMontant();
+    toast('Tarifs mis à jour (session)');
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────────────────────
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── UTILS ─────────────────────────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
