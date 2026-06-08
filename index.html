@@ -66,8 +66,8 @@
     /* LISTE */
     .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
     .search-wrap { flex: 1; min-width: 160px; position: relative; }
-    .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
-    .search-wrap input { padding-left: 34px; }
+
+    .search-wrap input { padding-left: 12px; }
     .filter-btn { padding: 8px 14px; border: 1.5px solid var(--gris-bord); border-radius: 8px; background: var(--blanc); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); transition: all 0.15s; white-space: nowrap; }
     .filter-btn.active { background: var(--noir); color: var(--jaune); border-color: var(--noir); }
     .resa-list { display: flex; flex-direction: column; gap: 8px; }
@@ -196,7 +196,6 @@
       <div class="panel-body">
         <div class="toolbar">
           <div class="search-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input type="text" id="search-input" placeholder="Rechercher un nom..." oninput="renderList()" />
           </div>
           <button class="filter-btn active" onclick="setFilter('all',this)">Tous</button>
