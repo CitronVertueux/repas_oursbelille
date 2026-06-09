@@ -414,23 +414,7 @@
           <strong id="montant">0.00 €</strong>
         </div>
 
-        <div class="frow">
-          <div class="fg">
-            <label class="fl">Paiement</label>
-            <select id="f-pay" class="fi">
-              <option value="">— choisir —</option>
-              <option>CB</option><option>Espèces</option><option>Chèque</option><option>Virement</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label class="fl">Statut</label>
-            <select id="f-stat" class="fi">
-              <option value="Non payé">Non payé</option>
-              <option value="En attente">En attente</option>
-              <option value="Payé">Payé</option>
-            </select>
-          </div>
-        </div>
+
 
         <div class="fg">
           <label class="fl">Commentaires</label>
@@ -456,8 +440,6 @@
             <input type="text" id="search" placeholder="Rechercher…" oninput="render()"/>
           </div>
           <button class="ftab on" onclick="setF('all',this)">Tous</button>
-          <button class="ftab" onclick="setF('Payé',this)">Payés</button>
-          <button class="ftab" onclick="setF('Non payé',this)">Non payés</button>
         </div>
         <div id="list"><div class="loading"><span class="spinner"></span> Chargement…</div></div>
       </div>
@@ -540,7 +522,7 @@
     const total  = allResas.length;
     const adultes = allResas.reduce((s,r)=>s+(parseInt(r.adultes)||0),0);
     const enfants = allResas.reduce((s,r)=>s+(parseInt(r.enfants)||0),0);
-    const enc    = allResas.filter(r=>r.statut==="Payé").reduce((s,r)=>s+(parseFloat(r.montant)||0),0);
+    const enc    = allResas.reduce((s,r)=>s+(parseFloat(r.montant)||0),0);
     document.getElementById("s-total").textContent   = total;
     document.getElementById("s-adultes").textContent = adultes;
     document.getElementById("s-enfants").textContent = enfants;
@@ -621,8 +603,8 @@
       telephone:    document.getElementById("f-tel").value.trim(),
       adultes:      document.getElementById("f-adul").value||0,
       enfants:      document.getElementById("f-enf").value||0,
-      paiement:     document.getElementById("f-pay").value,
-      statut:       document.getElementById("f-stat").value,
+      paiement:     "",
+      statut:       "Non payé",
       commentaires: document.getElementById("f-com").value.trim(),
     };
     if (isEdit) params.rowIndex = rowIndex;
@@ -648,8 +630,7 @@
     document.getElementById("f-tel").value     = r.telephone||"";
     document.getElementById("f-adul").value    = r.adultes||0;
     document.getElementById("f-enf").value     = r.enfants||0;
-    document.getElementById("f-pay").value     = r.paiement||"";
-    document.getElementById("f-stat").value    = r.statut||"Non payé";
+
     document.getElementById("f-com").value     = r.commentaires||"";
     calcMontant();
     document.getElementById("form-title").textContent = "Modifier";
@@ -672,8 +653,7 @@
     ["edit-row","f-nom","f-tel","f-com"].forEach(id=>document.getElementById(id).value="");
     document.getElementById("f-adul").value = 0;
     document.getElementById("f-enf").value  = 0;
-    document.getElementById("f-pay").value  = "";
-    document.getElementById("f-stat").value = "Non payé";
+
     calcMontant();
     document.getElementById("form-title").textContent   = "Nouvelle réservation";
     document.getElementById("form-badge").textContent   = "Nouveau";
