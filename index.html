@@ -419,7 +419,7 @@
             <label class="fl">Paiement</label>
             <select id="f-pay" class="fi">
               <option value="">— choisir —</option>
-              <option>CB</option><option>Espèces</option>
+              <option>CB</option><option>Espèces</option><option>Chèque</option><option>Virement</option>
             </select>
           </div>
           <div class="fg">
@@ -434,7 +434,7 @@
 
         <div class="fg">
           <label class="fl">Commentaires</label>
-          <textarea id="f-com" class="fi" placeholder="Commentaires"></textarea>
+          <textarea id="f-com" class="fi" placeholder="Allergies, notes…"></textarea>
         </div>
 
         <button class="btn btn-primary" id="btn-sub" onclick="submitForm()">+ Ajouter la réservation</button>
@@ -485,7 +485,7 @@
 
     setupCalc();
     loadAll();
-    setInterval(loadAll, 30000); // auto-refresh 30s
+    setInterval(loadAll, 3000); // auto-refresh 30s
   });
 
   async function logout() {
@@ -516,6 +516,9 @@
   }
 
   async function loadAll() {
+    // Indicateur discret
+    const btn = document.querySelector('button[onclick="loadAll()"]');
+    if (btn) btn.style.opacity = '0.4';
     try {
       const cfg = await api({ action: "getConfig" });
       if (cfg.prixAdulte) prixA = parseFloat(cfg.prixAdulte);
@@ -527,6 +530,7 @@
       allResas = d.reservations || [];
       render();
       updateStats();
+      if (btn) btn.style.opacity = '1';
     } catch(e) {
       document.getElementById("list").innerHTML = '<div class="loading">❌ Connexion impossible au Sheet.</div>';
     }
